@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Libro Contable · Anchetas</title>
+<meta name="description" content="Libro contable personalizado: diario de ventas/compras, costos por referencia y catálogo de productos. Funciona sin conexión.">
+<meta name="theme-color" content="#a63a50">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Contable">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-title-row">
+    <h1 class="app-title">
+      <span class="logo-dot"></span>
+      <span>Libro Contable<small>Anchetas · costos y ventas</small></span>
+    </h1>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span id="offline-pill" class="offline-pill"><span class="dot"></span><span class="label">En línea</span></span>
+      <button id="install-btn" class="btn btn-gold btn-sm">⬇️ Instalar</button>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button class="tab-btn active" data-target="tab-diario" role="tab" aria-selected="true">📒 Libro diario</button>
+    <button class="tab-btn" data-target="tab-costos" role="tab" aria-selected="false">🧮 Costo productos</button>
+    <button class="tab-btn" data-target="tab-productos" role="tab" aria-selected="false">📦 Productos</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ===================== PESTAÑA 1: LIBRO DIARIO ===================== -->
+  <section id="tab-diario" class="tab-panel active">
+
+    <div class="stat-row">
+      <div class="stat-box entradas">
+        <p class="stat-label">Entradas</p>
+        <p class="stat-value" id="stat-entradas">$ 0</p>
+      </div>
+      <div class="stat-box salidas">
+        <p class="stat-label">Salidas</p>
+        <p class="stat-value" id="stat-salidas">$ 0</p>
+      </div>
+      <div class="stat-box saldo">
+        <p class="stat-label">Saldo actual</p>
+        <p class="stat-value" id="stat-saldo">$ 0</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="section-title">Nuevo registro <span class="hint">se guarda arriba de la lista</span></p>
+      <div class="quickadd-grid">
+        <div class="span1">
+          <label class="field-label" for="d-fecha">Fecha</label>
+          <input type="date" id="d-fecha">
+        </div>
+        <div class="span1">
+          <label class="field-label" for="d-tipo">Tipo</label>
+          <select id="d-tipo">
+            <option value="venta" selected>Venta</option>
+            <option value="compra">Compra</option>
+            <option value="traslado">Traslado</option>
+          </select>
+        </div>
+        <div class="span2 combo" id="d-producto-wrap">
+          <label class="field-label" for="d-producto">Producto</label>
+          <input type="text" id="d-producto" placeholder="Busca o crea…" autocomplete="off">
+          <div class="combo-list" id="d-producto-list"></div>
+        </div>
+        <div class="span1" id="d-valor-wrap">
+          <label class="field-label" for="d-valor">Valor</label>
+          <input type="number" step="any" id="d-valor" placeholder="0">
+        </div>
+        <div class="span1" id="d-cant-wrap">
+          <label class="field-label" for="d-cant">Cant.</label>
+          <input type="number" step="any" id="d-cant" placeholder="0">
+        </div>
+        <div class="span6">
+          <label class="field-label" for="d-coment">Coment.</label>
+          <input type="text" id="d-coment" placeholder="Opcional">
+        </div>
+      </div>
+      <div class="actions-row">
+        <button id="d-btn-guardar" class="btn btn-primary">💾 Guardar registro</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="section-title">Registros <span class="hint">más reciente primero</span></p>
+      <div class="record-list" id="d-record-list"></div>
+    </div>
+
+    <div class="actions-row">
+      <button id="d-btn-backup" class="btn btn-gold btn-block">⬇️ Guardar respaldo</button>
+      <button id="d-btn-restore" class="btn btn-ghost btn-block">⬆️ Cargar respaldo</button>
+      <input type="file" id="d-file-restore" accept="application/json,.json" class="visually-hidden">
+    </div>
+  </section>
+
+  <!-- ===================== PESTAÑA 2: COSTO DE PRODUCTOS ===================== -->
+  <section id="tab-costos" class="tab-panel">
+    <div class="card">
+      <p class="section-title">Costo por referencia <span class="hint">agrupado, Total Ref. automático</span></p>
+      <div class="actions-row" style="margin-top:0;margin-bottom:10px;">
+        <button id="c-btn-nueva-ref" class="btn btn-primary btn-sm">+ Nueva referencia</button>
+        <button id="c-btn-csv" class="btn btn-ghost btn-sm">⬆️ Cargar productos CSV</button>
+        <input type="file" id="c-file-csv" accept=".csv,text/csv" class="visually-hidden">
+      </div>
+      <div id="c-groups"></div>
+    </div>
+  </section>
+
+  <!-- ===================== PESTAÑA 3: PRODUCTOS ===================== -->
+  <section id="tab-productos" class="tab-panel">
+    <div class="card">
+      <p class="section-title">Catálogo de productos <span class="hint">se edita y guarda al instante</span></p>
+      <div class="actions-row" style="margin-top:0;margin-bottom:10px;">
+        <button id="p-btn-nuevo" class="btn btn-primary btn-sm">+ Nuevo producto</button>
+        <button id="p-btn-csv" class="btn btn-ghost btn-sm">⬆️ Cargar productos CSV</button>
+        <input type="file" id="p-file-csv" accept=".csv,text/csv" class="visually-hidden">
+      </div>
+      <div id="p-list"></div>
+    </div>
+  </section>
+
+  <footer class="appfoot">Libro Contable · Anchetas — funciona sin conexión · v1.0.0</footer>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

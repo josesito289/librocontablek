@@ -1,0 +1,20 @@
+{
+  "name": "Libro Contable · Anchetas",
+  "short_name": "Contable",
+  "description": "Libro diario de ventas y compras, costo de productos por referencia y catálogo de productos. Funciona sin conexión.",
+  "id": "./index.html",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbf5f4",
+  "theme_color": "#a63a50",
+  "lang": "es-CO",
+  "dir": "ltr",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
